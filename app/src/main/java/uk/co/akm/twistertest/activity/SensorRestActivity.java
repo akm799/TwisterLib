@@ -96,7 +96,7 @@ public class SensorRestActivity extends BaseSingleSensorValueActivity {
         startButton.setEnabled(false);
         minValueText.setText("");
         maxValueText.setText("");
-        messageText.setText("Hold the device as steady as you can.");
+        messageText.setText("Hold the device as steady as you can for " + Math.round((WAIT_MILLIS + RECORD_MILLIS)/1000f) + " seconds.");
 
         handler.postDelayed(startRecording, WAIT_MILLIS);
         handler.postDelayed(stopRecording,  WAIT_MILLIS + RECORD_MILLIS);
