@@ -4,11 +4,8 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
 import android.os.Handler;
-import android.support.annotation.LayoutRes;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import uk.co.akm.twistertest.R;
@@ -22,13 +19,16 @@ public class SensorRestActivity extends BaseSingleSensorValueActivity {
     private static final int Y_AXIS_INDEX = 1;
     private static final int Z_AXIS_INDEX = 2;
 
-    private static final long WAIT_MILLIS = 3*1000;
-    private static final long RECORD_MILLIS = 5*1000;
+    private static final int PREPARE_SECS = 4;
+    private static final int RECORD_SECS = 4;
+    private static final int TOTAL_SECS = PREPARE_SECS + RECORD_SECS;
+    private static final long SECS_TO_MILLIS = 1000;
 
     private float minValue;
     private float maxValue;
 
     private boolean active;
+    private int secondsLeft;
 
     private Handler handler = new Handler();
 
@@ -36,6 +36,38 @@ public class SensorRestActivity extends BaseSingleSensorValueActivity {
     private TextView minValueText;
     private TextView maxValueText;
     private View startButton;
+
+    private final String recordingStartMessage = ("Hold the device as steady as you can for " + TOTAL_SECS + " seconds.\n");
+
+    private final Runnable startRecording = new Runnable() {
+        @Override
+        public void run() {
+            active = true;
+        }
+    };
+
+    private final Runnable recordingCountdown = new Runnable() {
+        @Override
+        public void run() {
+            secondsLeft -= 1;
+            if (secondsLeft > 0) {
+                messageText.setText(recordingStartMessage + secondsLeft + " seconds left.");
+                handler.postDelayed(recordingCountdown, SECS_TO_MILLIS);
+            }
+        }
+    };
+
+    private final Runnable stopRecording = new Runnable() {
+        @Override
+        public void run() {
+            active = false;
+            secondsLeft = 0;
+            startButton.setEnabled(true);
+            minValueText.setText("Minimum: " + minValue + " rad/s");
+            maxValueText.setText("Maximum: " + maxValue + " rad/s");
+            messageText.setText("Press the 'Record' button to record motion levels.");
+        }
+    };
 
     public SensorRestActivity() {
         super(R.layout.activity_sensor_rest, Sensor.TYPE_GYROSCOPE, SensorManager.SENSOR_DELAY_UI);
@@ -72,33 +104,27 @@ public class SensorRestActivity extends BaseSingleSensorValueActivity {
     }
 
     public void onRecord(View view) {
-        final Runnable startRecording = new Runnable() {
-            @Override
-            public void run() {
-                active = true;
-            }
-        };
+        initValuesForRecording();
+        setScreenViewsForRecording();
+        postStartCountdownAndStopRecordingRunnables();
+    }
 
-        final Runnable stopRecording = new Runnable() {
-            @Override
-            public void run() {
-                active = false;
-                startButton.setEnabled(true);
-                minValueText.setText("Minimum: " + minValue);
-                maxValueText.setText("Maximum: " + maxValue);
-                messageText.setText("Press the 'Record' button to record motion levels.");
-            }
-        };
-
+    private void initValuesForRecording() {
         minValue = Float.MAX_VALUE;
         maxValue = Float.MIN_VALUE;
+        secondsLeft = TOTAL_SECS;
+    }
 
+    private void setScreenViewsForRecording() {
         startButton.setEnabled(false);
         minValueText.setText("");
         maxValueText.setText("");
-        messageText.setText("Hold the device as steady as you can for " + Math.round((WAIT_MILLIS + RECORD_MILLIS)/1000f) + " seconds.");
+        messageText.setText(recordingStartMessage);
+    }
 
-        handler.postDelayed(startRecording, WAIT_MILLIS);
-        handler.postDelayed(stopRecording,  WAIT_MILLIS + RECORD_MILLIS);
+    private void postStartCountdownAndStopRecordingRunnables() {
+        handler.postDelayed(startRecording, PREPARE_SECS*SECS_TO_MILLIS);
+        handler.postDelayed(recordingCountdown, SECS_TO_MILLIS);
+        handler.postDelayed(stopRecording,  TOTAL_SECS*SECS_TO_MILLIS);
     }
 }
