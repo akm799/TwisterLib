@@ -1,3 +1,4 @@
+<!-- Deprecated TODO Delete this after deleting HistogramView.java -->
 <resources>
     <declare-styleable name="HistogramView">
         <attr name="exampleString" format="string" />

@@ -1,0 +1,15 @@
+<resources>
+    <declare-styleable name="FunctionView">
+        <!-- The colour of the plot. -->
+        <attr name="plotColor" format="color" />
+
+        <!-- The width of the plot line. -->
+        <attr name="plotStrokeWidth" format="dimension" />
+
+        <!-- The colour of the square border that encloses the plot. -->
+        <attr name="borderColor" format="color" />
+
+        <!-- The width of the square border line that encloses the plot. -->
+        <attr name="borderStrokeWidth" format="dimension" />
+    </declare-styleable>
+</resources>

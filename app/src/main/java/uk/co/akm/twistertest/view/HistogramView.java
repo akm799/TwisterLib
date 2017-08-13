@@ -13,6 +13,7 @@ import uk.co.akm.twistertest.hist.SensorValueHistogram;
 /**
  * TODO: document your custom view class.
  */
+@Deprecated
 public class HistogramView extends View {
     private static final String TAG = HistogramView.class.getSimpleName();
 
