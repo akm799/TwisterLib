@@ -58,10 +58,10 @@ public final class FunctionPlotText {
      * @param title the title of the function plot
      */
     public FunctionPlotText(FunctionData data, NumberFormat xNumberFormat, NumberFormat yNumberFormat, String xMinFormat, String xMaxFormat, String yMinFormat, String yMaxFormat, String xAxisStr, String yAxisStr, String title) {
-        xMinStr = String.format(xMinFormat, xNumberFormat.format(data.xMin));
-        xMaxStr = String.format(xMaxFormat, xNumberFormat.format(data.xMax));
-        yMinStr = String.format(yMinFormat, yNumberFormat.format(data.yMin));
-        yMaxStr = String.format(yMaxFormat, yNumberFormat.format(data.yMax));
+        xMinStr = String.format(xMinFormat, xNumberFormat.format(data.xMin()));
+        xMaxStr = String.format(xMaxFormat, xNumberFormat.format(data.xMax()));
+        yMinStr = String.format(yMinFormat, yNumberFormat.format(data.yMin()));
+        yMaxStr = String.format(yMaxFormat, yNumberFormat.format(data.yMax()));
         this.xAxisStr = xAxisStr;
         this.yAxisStr = yAxisStr;
         this.title = title;

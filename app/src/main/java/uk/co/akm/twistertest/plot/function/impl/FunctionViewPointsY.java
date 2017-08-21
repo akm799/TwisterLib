@@ -1,22 +1,20 @@
-package uk.co.akm.twistertest.plot.function;
-
+package uk.co.akm.twistertest.plot.function.impl;
 
 import android.view.View;
 
+import uk.co.akm.twistertest.plot.function.FunctionData;
+import uk.co.akm.twistertest.plot.function.FunctionViewPoints;
 import uk.co.akm.twistertest.plot.view.FunctionView;
 
-public final class FunctionPlotValues {
-    /**
-     * The points that will be drawn to plot the function. These array holding these points follows
-     * the usual convention: [x0, y0, x1, y1, x2, y2, ..., xN, yN]. Thus the array must hold 2*N values
-     * where N is the number of points. Please note that if N is no equal to #getContentWidth(), then
-     * this method will fail silently.
-     */
-    public final float[] points;
+/**
+ * Created by Thanos Mavroidis on 21/08/2017.
+ */
+final class FunctionViewPointsY implements FunctionViewPoints {
+    private final float[] points;
 
-    public FunctionPlotValues(FunctionView view, FunctionData data) {
-        if (view.hasDimensions() && data.values != null && data.values.length == view.getContentWidth()) {
-            this.points = buildPoints(view, data.values, data.yMin, data.yMax);
+    FunctionViewPointsY(FunctionView view, FunctionData data) {
+        if (view.hasDimensions() && data.values().length == view.getContentWidth()) {
+            this.points = buildPoints(view, data.values(), data.yMin(), data.yMax());
         } else {
             this.points = null;
         }
@@ -37,5 +35,15 @@ public final class FunctionPlotValues {
             points[j] = i;
             points[j + 1] = verticalOffset - scaleY*(values[i] - yMin);
         }
+    }
+
+    @Override
+    public boolean yOnly() {
+        return true;
+    }
+
+    @Override
+    public float[] points() {
+        return points;
     }
 }

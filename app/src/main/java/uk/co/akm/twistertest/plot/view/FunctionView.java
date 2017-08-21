@@ -9,7 +9,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import uk.co.akm.twistertest.R;
-import uk.co.akm.twistertest.plot.function.FunctionPlotValues;
+import uk.co.akm.twistertest.plot.function.FunctionViewPoints;
 
 /**
  * Function view that plots a series of function points. Each point corresponds exactly to one screen pixel.
@@ -32,7 +32,7 @@ public class FunctionView extends View {
     private int borderColor = Color.BLACK;
     private float borderStrokeWidth = 1;
 
-    private FunctionPlotValues plotValues;
+    private FunctionViewPoints viewPoints;
 
     public FunctionView(Context context) {
         super(context);
@@ -87,8 +87,12 @@ public class FunctionView extends View {
         }
 
         drawBorder(canvas); // Always draw the square graph border, even if there is no graph to draw inside it.
-        if (plotValues != null) {
-            canvas.drawPoints(plotValues.points, plotPaint);
+        if (viewPoints != null) {
+            if (viewPoints.yOnly()) {
+                canvas.drawPoints(viewPoints.points(), plotPaint);
+            } else {
+                canvas.drawLines(viewPoints.points(), plotPaint);
+            }
         }
     }
 
@@ -111,17 +115,17 @@ public class FunctionView extends View {
      * This method should be called after the view has already been laid out, in order to draw the
      * desirable function. Before this method call, only the square graph border is visible.
      *
-     * @param plotValues the function points to be drawn
+     * @param viewPoints the function points to be drawn
      */
-    public final void drawFunction(FunctionPlotValues plotValues) {
-        if (functionHasData(plotValues) && hasDimensions()) {
-            this.plotValues = plotValues;
+    public final void drawFunction(FunctionViewPoints viewPoints) {
+        if (functionHasData(viewPoints) && hasDimensions()) {
+            this.viewPoints = viewPoints;
             invalidate();
         }
     }
 
-    private boolean functionHasData(FunctionPlotValues plotValues) {
-        return (plotValues != null && plotValues.points != null && plotValues.points.length > 0);
+    private boolean functionHasData(FunctionViewPoints viewPoints) {
+        return (viewPoints != null && viewPoints.points() != null && viewPoints.points().length > 0);
     }
 
     /**
