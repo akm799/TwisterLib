@@ -103,7 +103,7 @@ public class FunctionView extends View {
         final int bottom = getHeight() - getPaddingBottom() - 1;
         canvas.drawLine(left,  top,    right, top, borderPaint);
         canvas.drawLine(right, top,    right, bottom, borderPaint);
-        canvas.drawLine(right, bottom, left,  bottom,borderPaint);
+        canvas.drawLine(right, bottom, left,  bottom, borderPaint);
         canvas.drawLine(left,  bottom, left,  top, borderPaint);
     }
 
