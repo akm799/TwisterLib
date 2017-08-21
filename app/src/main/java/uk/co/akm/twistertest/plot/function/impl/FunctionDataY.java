@@ -10,9 +10,8 @@ import uk.co.akm.twistertest.plot.function.FunctionData;
 final class FunctionDataY implements FunctionData {
     private final float xMin;
     private final float xMax;
-    private final float yMin;
-    private final float yMax;
     private final float[] yValues;
+    private final MinMaxFinder.MinMax yMinMax;
 
     /**
      * The input values of the function to be plotted. Please note that for this plot, the number of
@@ -32,30 +31,7 @@ final class FunctionDataY implements FunctionData {
         this.xMin = xMin;
         this.xMax = xMax;
         this.yValues = yValues;
-        this.yMin = findMin(yValues);
-        this.yMax = findMax(yValues);
-    }
-
-    private float findMin(float[] values) {
-        float min = Float.MAX_VALUE;
-        for (float v : values) {
-            if (v < min) {
-                min = v;
-            }
-        }
-
-        return min;
-    }
-
-    private float findMax(float[] values) {
-        float max = Float.MIN_VALUE;
-        for (float v : values) {
-            if (v > max) {
-                max = v;
-            }
-        }
-
-        return max;
+        this.yMinMax = MinMaxFinder.findMinAndMax(yValues);
     }
 
     @Override
@@ -70,12 +46,12 @@ final class FunctionDataY implements FunctionData {
 
     @Override
     public float yMin() {
-        return yMin;
+        return yMinMax.min;
     }
 
     @Override
     public float yMax() {
-        return yMax;
+        return yMinMax.max;
     }
 
     @Override

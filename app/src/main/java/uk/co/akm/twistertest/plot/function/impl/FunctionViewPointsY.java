@@ -13,7 +13,16 @@ final class FunctionViewPointsY implements FunctionViewPoints {
     private final float[] points;
 
     FunctionViewPointsY(FunctionView view, FunctionData data) {
-        if (view.hasDimensions() && data.values().length == view.getContentWidth()) {
+        if (data == null) {
+            this.points = null;
+            return;
+        }
+
+        if (!data.yOnly()) {
+            throw new IllegalArgumentException("Error: FunctionData argument is null or x-y-type (i.e. yOnly()=false). This is not allowed in this y-only implementation.");
+        }
+
+        if (view != null && view.hasDimensions() && data.values() != null && data.values().length == view.getContentWidth()) {
             this.points = buildPoints(view, data.values(), data.yMin(), data.yMax());
         } else {
             this.points = null;

@@ -13,7 +13,7 @@ public class FunctionViewPointsFactory {
         if (functionData.yOnly()) {
             return new FunctionViewPointsY(view, functionData);
         } else {
-            throw new UnsupportedOperationException("TODO");
+            return new FunctionViewPointsXY(view, functionData);
         }
     }
 

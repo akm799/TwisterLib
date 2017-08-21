@@ -5,11 +5,10 @@ import uk.co.akm.twistertest.plot.function.FunctionData;
 /**
  * Created by Thanos Mavroidis on 21/08/2017.
  */
-
 public class FunctionDataFactory {
 
     FunctionData xy(float[] xyValues) {
-        throw new UnsupportedOperationException("TODO");
+        return new FunctionDataXY(xyValues);
     }
 
     FunctionData yOnly(float xMin, float xMax, float[] yValues) {
