@@ -2,13 +2,13 @@ package uk.co.akm.twistertest.hist;
 
 
 import android.util.Log;
-import android.view.View;
 
 import uk.co.akm.twistertest.view.HistogramView;
 
 /**
  * Created by Thanos Mavroidis on 17/07/2017.
  */
+@Deprecated
 public final class SensorValueHistogram {
     private static final String TAG = SensorValueHistogram.class.getSimpleName();
 
