@@ -33,7 +33,7 @@ public class SensorRestActivity extends BaseSingleSensorValueActivity {
     private boolean active;
     private int secondsLeft;
 
-    private Handler handler = new Handler();
+    private final Handler handler = new Handler();
 
     private TextView avgText;
     private TextView absAvgText;

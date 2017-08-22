@@ -9,7 +9,7 @@ import uk.co.akm.twistertest.plot.view.FunctionView;
  */
 public class FunctionViewPointsFactory {
 
-    FunctionViewPoints buildViewPoints(FunctionView view, FunctionData functionData) {
+    public static FunctionViewPoints buildViewPoints(FunctionView view, FunctionData functionData) {
         if (functionData.yOnly()) {
             return new FunctionViewPointsY(view, functionData);
         } else {
