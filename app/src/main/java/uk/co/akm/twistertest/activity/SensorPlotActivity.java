@@ -60,6 +60,7 @@ public class SensorPlotActivity extends BaseSingleSensorValueActivity {
     }
 
     public void onRecord(View view) {
+        buffer.clear();
         handler.post(startRecording);
         handler.postDelayed(stopRecording, RECORD_SECS*SECS_TO_MILLIS);
     }

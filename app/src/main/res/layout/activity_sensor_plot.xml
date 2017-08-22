@@ -7,8 +7,8 @@
 
     <uk.co.akm.twistertest.plot.view.FunctionView
         android:id="@+id/plot_view"
-        android:layout_width="400dp"
-        android:layout_height="400dp"
+        android:layout_width="350dp"
+        android:layout_height="350dp"
         android:layout_centerInParent="true"/>
 
     <Button

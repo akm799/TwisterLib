@@ -28,6 +28,10 @@ public final class SensorValueBuffer {
         values[size++] = value;
     }
 
+    public void clear() {
+        size = 0;
+    }
+
     public int getSize() {
         return size;
     }
