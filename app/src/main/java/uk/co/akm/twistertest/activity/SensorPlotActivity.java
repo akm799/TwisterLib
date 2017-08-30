@@ -6,6 +6,7 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.widget.TextView;
 
 import uk.co.akm.twistertest.R;
 import uk.co.akm.twistertest.activity.base.BaseSingleSensorValueActivity;
@@ -30,6 +31,11 @@ public class SensorPlotActivity extends BaseSingleSensorValueActivity {
     private final Handler handler = new Handler();
 
     private boolean active;
+
+    private TextView xMax;
+    private TextView xMin;
+    private TextView yMax;
+    private TextView yMin;
 
     private FunctionView functionView;
 
@@ -56,12 +62,22 @@ public class SensorPlotActivity extends BaseSingleSensorValueActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        resolveViewReferences();
+        setTextViews(0, 0, 0, 0);
+    }
+
+    private void resolveViewReferences() {
+        xMin = (TextView)findViewById(R.id.xMin);
+        xMax = (TextView)findViewById(R.id.xMax);
+        yMin = (TextView)findViewById(R.id.yMin);
+        yMax = (TextView)findViewById(R.id.yMax);
         functionView = (FunctionView)findViewById(R.id.plot_view);
     }
 
     public void onRecord(View view) {
         buffer.clear();
         functionView.clear();
+        setTextViews(0, 0, 0, 0);
         handler.post(startRecording);
         handler.postDelayed(stopRecording, RECORD_SECS*SECS_TO_MILLIS);
     }
@@ -82,5 +98,13 @@ public class SensorPlotActivity extends BaseSingleSensorValueActivity {
         final FunctionData data = FunctionDataFactory.xy(buffer);
         final FunctionViewPoints viewPoints = FunctionViewPointsFactory.buildViewPoints(functionView, data);
         functionView.drawFunction(viewPoints);
+        setTextViews(0, RECORD_SECS*SECS_TO_MILLIS, data.yMin(), data.yMax());
+    }
+
+    private void setTextViews(float xMn, float xMx, float yMn, float yMx) {
+        xMin.setText("xMin=" + xMn + " ms");
+        xMax.setText("xMax=" + xMx + " ms");
+        yMin.setText("yMin=" + yMn + " rad/s");
+        yMax.setText("yMax=" + yMx + " rad/s");
     }
 }

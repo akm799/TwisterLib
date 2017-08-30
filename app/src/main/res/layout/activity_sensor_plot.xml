@@ -11,10 +11,42 @@
         android:layout_height="350dp"
         android:layout_centerInParent="true"/>
 
-    <Button
+    <TextView
+        android:id="@+id/xMax"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@id/plot_view"
+        android:layout_above="@id/plot_view"
+        android:textSize="12sp"/>
+
+    <TextView
+        android:id="@+id/yMax"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@id/plot_view"
+        android:layout_above="@id/xMax"
+        android:textSize="12sp"/>
+
+    <TextView
+        android:id="@+id/xMin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@id/plot_view"
+        android:layout_below="@id/plot_view"
+        android:textSize="12sp"/>
+
+    <TextView
+        android:id="@+id/yMin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/plot_view"
+        android:layout_below="@id/xMin"
+        android:textSize="12sp"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
         android:layout_below="@id/plot_view"
         android:layout_marginTop="20dp"
         android:text="Record"
