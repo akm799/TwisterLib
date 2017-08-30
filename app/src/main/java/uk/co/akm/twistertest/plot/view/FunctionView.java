@@ -148,4 +148,12 @@ public class FunctionView extends View {
     public final int getContentHeight() {
         return getWidth() - getPaddingTop() - getPaddingBottom();
     }
+
+    /**
+     * Clears the view by removing the previously drawn function, if any.
+     */
+    public final void clear() {
+        viewPoints = null;
+        invalidate();
+    }
 }
