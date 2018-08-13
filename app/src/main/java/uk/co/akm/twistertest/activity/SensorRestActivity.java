@@ -3,8 +3,8 @@ package uk.co.akm.twistertest.activity;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
-import android.os.Handler;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.TextView;
 
@@ -24,15 +24,21 @@ public class SensorRestActivity extends BaseSingleSensorValueActivity {
     private static final int TOTAL_SECS = PREPARE_SECS + RECORD_SECS;
     private static final long SECS_TO_MILLIS = 1000;
 
+    private int nUpdates;
+    private float sum;
+    private float absSum;
     private float minValue;
     private float maxValue;
 
     private boolean active;
     private int secondsLeft;
 
-    private Handler handler = new Handler();
+    private final Handler handler = new Handler();
 
+    private TextView avgText;
+    private TextView absAvgText;
     private TextView messageText;
+    private TextView nSamplesText;
     private TextView minValueText;
     private TextView maxValueText;
     private View startButton;
@@ -62,9 +68,14 @@ public class SensorRestActivity extends BaseSingleSensorValueActivity {
         public void run() {
             active = false;
             secondsLeft = 0;
+            final float average = sum/nUpdates;
+            final float absAverage = absSum/nUpdates;
             startButton.setEnabled(true);
+            avgText.setText("Average: " + average + " rad/s");
+            nSamplesText.setText("Number of samples: " + nUpdates);
             minValueText.setText("Minimum: " + minValue + " rad/s");
             maxValueText.setText("Maximum: " + maxValue + " rad/s");
+            absAvgText.setText("|Average|: " + absAverage + " rad/s");
             messageText.setText("Press the 'Record' button to record motion levels.");
         }
     };
@@ -77,7 +88,10 @@ public class SensorRestActivity extends BaseSingleSensorValueActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        avgText = (TextView)findViewById(R.id.avg);
+        absAvgText = (TextView)findViewById(R.id.absAvg);
         messageText = (TextView)findViewById(R.id.message);
+        nSamplesText = (TextView)findViewById(R.id.nSamples);
         minValueText = (TextView)findViewById(R.id.minValue);
         maxValueText = (TextView)findViewById(R.id.maxValue);
         startButton = findViewById(R.id.startButton);
@@ -100,6 +114,10 @@ public class SensorRestActivity extends BaseSingleSensorValueActivity {
             if (value > maxValue) {
                 maxValue = value;
             }
+
+            nUpdates++;
+            sum += value;
+            absSum += Math.abs(value);
         }
     }
 
@@ -110,6 +128,9 @@ public class SensorRestActivity extends BaseSingleSensorValueActivity {
     }
 
     private void initValuesForRecording() {
+        sum = 0;
+        absSum = 0;
+        nUpdates = 0;
         minValue = Float.MAX_VALUE;
         maxValue = Float.MIN_VALUE;
         secondsLeft = TOTAL_SECS;
@@ -117,6 +138,9 @@ public class SensorRestActivity extends BaseSingleSensorValueActivity {
 
     private void setScreenViewsForRecording() {
         startButton.setEnabled(false);
+        avgText.setText("");
+        absAvgText.setText("");
+        nSamplesText.setText("");
         minValueText.setText("");
         maxValueText.setText("");
         messageText.setText(recordingStartMessage);
