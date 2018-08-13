@@ -22,7 +22,7 @@ public class SensorPlotActivity extends BaseSingleSensorValueActivity {
     private static final int Y_AXIS_INDEX = 1;
     private static final int Z_AXIS_INDEX = 2;
 
-    private static final int RECORD_SECS = 3;
+    private static final int RECORD_SECS = 6;
     private static final long SECS_TO_MILLIS = 1000;
     private static final int MAX_UPDATES_PER_SEC = 250;
 

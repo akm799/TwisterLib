@@ -1,5 +1,6 @@
 package uk.co.akm.twistertest.plot.function.impl;
 
+import android.util.Log;
 import android.view.View;
 
 import uk.co.akm.twistertest.plot.function.FunctionData;
@@ -10,11 +11,14 @@ import uk.co.akm.twistertest.plot.view.FunctionView;
  * Created by Thanos Mavroidis on 21/08/2017.
  */
 final class FunctionViewPointsXY implements FunctionViewPoints {
+    private static final String TAG = FunctionViewPointsXY.class.getSimpleName();
+
     private final float[] points;
 
     FunctionViewPointsXY(FunctionView view, FunctionData data) {
         if (data == null) {
             this.points = null;
+            logPointsCreationError(view, data);
             return;
         }
 
@@ -22,11 +26,17 @@ final class FunctionViewPointsXY implements FunctionViewPoints {
             throw new IllegalArgumentException("Error: FunctionData argument is null or y-type (i.e. yOnly()=true). This is not allowed in this x-y implementation.");
         }
 
-        if (view != null && view.hasDimensions() && data.values() != null && data.values().length < view.getContentWidth()) {
+        if (canPlotPoints(view, data)) {
             this.points = buildPoints(view, data);
         } else {
+            logPointsCreationError(view, data);
             this.points = null;
         }
+    }
+
+    private boolean canPlotPoints(FunctionView view, FunctionData data) {
+        // The data.values() array contains both the x and the y values, so the number of points is half the length of the array.
+        return  (view != null && view.hasDimensions() && data.values() != null && data.values().length/2 < view.getContentWidth());
     }
 
     private float[] buildPoints(FunctionView view, FunctionData data) {
@@ -65,7 +75,35 @@ final class FunctionViewPointsXY implements FunctionViewPoints {
     }
 
     @Override
+    public boolean hasPoints() {
+        return (points != null);
+    }
+
+    @Override
     public float[] points() {
         return points;
+    }
+
+    private void logPointsCreationError(FunctionView view, FunctionData data) {
+        if (view == null) {
+            Log.e(TAG, "Null view to plot the points passed. No points will be plotted.");
+        }
+
+        if (!view.hasDimensions()) {
+            Log.e(TAG, "The view passed to plot the points has not been layout out yet. No points will be plotted.");
+        }
+
+        if (data == null) {
+            Log.e(TAG, "Null points data passed. No points will be plotted.");
+        }
+
+        if (data.values() == null) {
+            Log.e(TAG, "The points data passed contains null values. No points will be plotted.");
+        }
+
+        final int nPoints = data.values().length/2; // The data.values() array contains both the x and the y values.
+        if (nPoints >= view.getContentWidth()) {
+            Log.e(TAG, "The points data passed contains " + nPoints + " points which is more than the available pixel width " + (view.getContentWidth() - 1) + ". No points will be plotted.");
+        }
     }
 }
