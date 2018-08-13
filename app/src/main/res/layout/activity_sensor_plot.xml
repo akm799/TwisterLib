@@ -5,6 +5,15 @@
     android:layout_height="match_parent"
     tools:context="uk.co.akm.twistertest.activity.SensorPlotActivity">
 
+    <TextView
+        android:id="@+id/countDownText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"/>
+
     <uk.co.akm.twistertest.plot.view.FunctionView
         android:id="@+id/plot_view"
         android:layout_width="350dp"
@@ -44,6 +53,7 @@
         android:textSize="12sp"/>
 
     <Button
+        android:id="@+id/recordButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
