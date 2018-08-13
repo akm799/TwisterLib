@@ -1,9 +1,0 @@
-<!-- Deprecated TODO Delete this after deleting HistogramView.java -->
-<resources>
-    <declare-styleable name="HistogramView">
-        <attr name="exampleString" format="string" />
-        <attr name="exampleDimension" format="dimension" />
-        <attr name="exampleColor" format="color" />
-        <attr name="exampleDrawable" format="color|reference" />
-    </declare-styleable>
-</resources>
