@@ -10,17 +10,20 @@ import android.widget.TextView;
 
 import uk.co.akm.twistertest.R;
 import uk.co.akm.twistertest.activity.base.BaseSingleSensorValueActivity;
+import uk.co.akm.twistertest.timer.CountDown;
+import uk.co.akm.twistertest.timer.CountdownListener;
 
 /**
  * Created by Thanos Mavroidis on 17/07/2017.
  */
-public class SensorRestActivity extends BaseSingleSensorValueActivity {
+public class SensorRestActivity extends BaseSingleSensorValueActivity implements CountdownListener {
     private static final int X_AXIS_INDEX = 0;
     private static final int Y_AXIS_INDEX = 1;
     private static final int Z_AXIS_INDEX = 2;
 
     private static final int PREPARE_SECS = 4;
     private static final int RECORD_SECS = 4;
+    private static final int COUNTDOWN_DECREMENT_SECS = 1;
     private static final int TOTAL_SECS = PREPARE_SECS + RECORD_SECS;
     private static final long SECS_TO_MILLIS = 1000;
 
@@ -31,7 +34,6 @@ public class SensorRestActivity extends BaseSingleSensorValueActivity {
     private float maxValue;
 
     private boolean active;
-    private int secondsLeft;
 
     private final Handler handler = new Handler();
 
@@ -45,40 +47,7 @@ public class SensorRestActivity extends BaseSingleSensorValueActivity {
 
     private final String recordingStartMessage = ("Hold the device as steady as you can for " + TOTAL_SECS + " seconds.\n");
 
-    private final Runnable startRecording = new Runnable() {
-        @Override
-        public void run() {
-            active = true;
-        }
-    };
-
-    private final Runnable recordingCountdown = new Runnable() {
-        @Override
-        public void run() {
-            secondsLeft -= 1;
-            if (secondsLeft > 0) {
-                messageText.setText(recordingStartMessage + secondsLeft + " seconds left.");
-                handler.postDelayed(recordingCountdown, SECS_TO_MILLIS);
-            }
-        }
-    };
-
-    private final Runnable stopRecording = new Runnable() {
-        @Override
-        public void run() {
-            active = false;
-            secondsLeft = 0;
-            final float average = sum/nUpdates;
-            final float absAverage = absSum/nUpdates;
-            startButton.setEnabled(true);
-            avgText.setText("Average: " + average + " rad/s");
-            nSamplesText.setText("Number of samples: " + nUpdates);
-            minValueText.setText("Minimum: " + minValue + " rad/s");
-            maxValueText.setText("Maximum: " + maxValue + " rad/s");
-            absAvgText.setText("|Average|: " + absAverage + " rad/s");
-            messageText.setText("Press the 'Record' button to record motion levels.");
-        }
-    };
+    private CountDown countDown;
 
     public SensorRestActivity() {
         super(R.layout.activity_sensor_rest, Sensor.TYPE_GYROSCOPE, SensorManager.SENSOR_DELAY_UI);
@@ -97,6 +66,16 @@ public class SensorRestActivity extends BaseSingleSensorValueActivity {
         startButton = findViewById(R.id.startButton);
 
         messageText.setText("Press the 'Record' button to record motion levels.");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        if (countDown != null) {
+            countDown.abort();
+            countDown = null;
+        }
     }
 
     @Override
@@ -122,9 +101,14 @@ public class SensorRestActivity extends BaseSingleSensorValueActivity {
     }
 
     public void onRecord(View view) {
+        countDown = new CountDown(handler, RECORD_SECS, COUNTDOWN_DECREMENT_SECS*SECS_TO_MILLIS, PREPARE_SECS*SECS_TO_MILLIS, this);
+        countDown.start();
+    }
+
+    @Override
+    public void onGetReady(int timeUnits) {
         initValuesForRecording();
         setScreenViewsForRecording();
-        postStartCountdownAndStopRecordingRunnables();
     }
 
     private void initValuesForRecording() {
@@ -133,7 +117,6 @@ public class SensorRestActivity extends BaseSingleSensorValueActivity {
         nUpdates = 0;
         minValue = Float.MAX_VALUE;
         maxValue = Float.MIN_VALUE;
-        secondsLeft = TOTAL_SECS;
     }
 
     private void setScreenViewsForRecording() {
@@ -146,9 +129,28 @@ public class SensorRestActivity extends BaseSingleSensorValueActivity {
         messageText.setText(recordingStartMessage);
     }
 
-    private void postStartCountdownAndStopRecordingRunnables() {
-        handler.postDelayed(startRecording, PREPARE_SECS*SECS_TO_MILLIS);
-        handler.postDelayed(recordingCountdown, SECS_TO_MILLIS);
-        handler.postDelayed(stopRecording,  TOTAL_SECS*SECS_TO_MILLIS);
+    @Override
+    public void onCountDown(int timeUnitsLeft, int timeUnits) {
+        if (timeUnitsLeft == timeUnits) {
+            active = true;
+        }
+
+        messageText.setText(recordingStartMessage + timeUnitsLeft + " seconds left.");
+    }
+
+    @Override
+    public void onCountDownFinished() {
+        active = false;
+        final float average = sum/nUpdates;
+        final float absAverage = absSum/nUpdates;
+        startButton.setEnabled(true);
+        avgText.setText("Average: " + average + " rad/s");
+        nSamplesText.setText("Number of samples: " + nUpdates);
+        minValueText.setText("Minimum: " + minValue + " rad/s");
+        maxValueText.setText("Maximum: " + maxValue + " rad/s");
+        absAvgText.setText("|Average|: " + absAverage + " rad/s");
+        messageText.setText("Press the 'Record' button to record motion levels.");
+
+        countDown = null;
     }
 }
